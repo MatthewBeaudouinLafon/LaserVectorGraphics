@@ -1,6 +1,7 @@
 from svgpathtools import svg2paths
 import numpy as np
 import matplotlib.pyplot as plt
+import serial
 
 def makeCartesian(complexPoints):
 	cartesianPoints = []
@@ -23,17 +24,67 @@ for path in paths: # Each path counts all lines together
 	points = []
 
 	for curve in path:
-		points += [(curve.point(t).real, curve.point(t).imag) for t in np.arange(0, 1, 100/curve.length())]
+		points += [(curve.point(t).real, curve.point(t).imag) for t in np.arange(0, 1, 10/curve.length())]
 
 	discretePaths.append(points)
 
-#Print x, y values individually for each curve
-for path in discretePaths:
-		print '\nNew Curve'
-		print 'x'
-		for point in zip(*path)[0]:
-			print point
+# Find min-max for scaling image
+minX = np.inf
+minY = np.inf
 
-		print 'y'	
-		for point in zip(*path)[1]:
-			print point
+maxX = 0
+maxY = 0
+
+for path in discretePaths:
+	for point in path:
+		x, y = point
+
+		if x < minX:
+			minX = x
+		elif maxX < x:
+			maxX = x
+
+		if y < minY:
+			minY = y
+		elif maxY < y:
+			maxY = y
+
+# Scale image
+scaledPaths = []
+scaleDown = maxX if maxX > maxY else maxY
+scaleUp = 100
+
+for path in discretePaths:
+
+	newPath = []
+	for point in path:
+		x, y = point
+		point = ((x - minX)*scaleUp/scaleDown, (y - minY)*scaleUp/scaleDown)
+		newPath.append(point)
+
+	scaledPaths.append(newPath)
+
+# #Print x, y values to console individually for each curve
+# for path in scaledPaths:
+# 		print '\nNew Curve'
+# 		print 'x'
+# 		for point in zip(*path)[0]:
+# 			print point
+
+# 		print 'y'	
+# 		for point in zip(*path)[1]:
+# 			print point
+
+# Send x-y over Serial
+ser = serial.Serial('COM3', 9600, timeout=0)  # open first serial port
+print ser.portstr       # check which port was really used
+
+for path in scaledPaths:
+	# ser.write("NEW")
+	for point in path:
+		ser.write(str(point[0]))
+		ser.write(str(point[1]))
+	# ser.write("STOP")
+
+print "Done"
+ser.close()             # close port
