@@ -34,20 +34,11 @@ minY = np.inf
 
 maxX = 0
 maxY = 0
-
 for path in discretePaths:
-	for point in path:
-		x, y = point
-
-		if x < minX:
-			minX = x
-		elif maxX < x:
-			maxX = x
-
-		if y < minY:
-			minY = y
-		elif maxY < y:
-			maxY = y
+	minX = min(zip(*path)[0])
+	maxX = max(zip(*path)[0])
+	minY = min(zip(*path)[1])
+	maxY = max(zip(*path)[1])
 
 # Scale image
 scaledPaths = []
@@ -84,7 +75,7 @@ for path in scaledPaths:
 	for point in path:
 		ser.write(str(point[0]))
 		ser.write(str(point[1]))
-	# ser.write("STOP")
+ser.write("STOP")
 
 print "Done"
 ser.close()             # close port
