@@ -4,26 +4,58 @@
 Servo panServo;
 Servo tiltServo;
  
-int x = 0;  // stores panServo position
-int y = 0;  // stores tiltServo position
+float x = 1500;  // stores panServo position
+float y = 1500;  // stores tiltServo position
 
-int dxs[] = {1, 3, 5, 7, 9};
-int dys[] = {10, 8, 6, 4, 2};
- 
+// determines which switch case is executed in loop()
+byte mode = 0;
+
+// for incoming serial data
+float data = 0;
+
+// stores position data from svg
+float xs[] = {};
+float ys[] = {};
+
 void setup() 
 { 
   // set up servo objects
   panServo.attach(9, 1000, 2000);
   tiltServo.attach(10, 1000, 2000);
+  // initialize serial communication at 9600 bps
+  Serial.begin(9600);
 } 
  
 void loop() 
 { 
-  for (int i = 0; i < (sizeof(dxs)/sizeof(int)); i++)
+  switch(mode)
   {
-    float xInput = dxs[i]*(1000/180) + 1000.5;
-    float yInput = dys[i]*(1000/180) + 1000.5;
-    panServo.writeMicroseconds((int)xInput);
-    tiltServo.writeMicroseconds((int)yInput);
+    // do nothing
+    case 0:
+      ;
+      break;
+      
+    // write mode
+    case 1:
+      // loop through elements of xs
+      for (int i = 0; i < (sizeof(xs)/sizeof(int)); i++)
+      {
+        // scale elements of dxs and dys to servo microsecond range
+        x = xs[i]*(500/200) + 1250.5;
+        y = ys[i]*(500/100) + 1250.5;
+        // write to servos, delay to ensure accurate tracing
+        panServo.writeMicroseconds((int)x);
+        tiltServo.writeMicroseconds((int)y);
+        delay(5);
+      }
+      break;
   }
-} 
+}
+
+void serialEvent()
+{
+  while(Serial.available())
+  {
+    data = Serial.read();
+  }
+}
