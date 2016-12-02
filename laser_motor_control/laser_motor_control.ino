@@ -28,6 +28,7 @@ void setup()
   tiltServo.attach(10, 1000, 2000);
   // initialize serial communication at 9600 bps
   Serial.begin(9600);
+  Serial.print("<Arduino is ready>");
 }
 
 
