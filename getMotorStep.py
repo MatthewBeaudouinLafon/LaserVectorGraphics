@@ -67,14 +67,14 @@ for path in discretePaths:
 # 			print point
 
 # Send x-y over Serial
-ser = serial.Serial('COM3', 9600, timeout=0)  # open first serial port
+ser = serial.Serial('COM6', 9600, timeout=0)  # open first serial port
 print ser.portstr       # check which port was really used
 
 for path in scaledPaths:
-	# ser.write("NEW")
+	ser.write(str(len(path)))
 	for point in path:
-		ser.write('({},{})'.format(point[0], point[1]))
-ser.write("STOP")
+		ser.write(str(point[0]))
+		ser.write(str(point[1]))
 
 print "Done"
 ser.close()             # close port

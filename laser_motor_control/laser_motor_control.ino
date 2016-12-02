@@ -28,6 +28,7 @@ void setup()
   tiltServo.attach(10, 1000, 2000);
   // initialize serial communication at 9600 bps
   Serial.begin(9600);
+  pinMode(13, OUTPUT);
   Serial.print("<Arduino is ready>");
 }
 
@@ -43,8 +44,8 @@ void loop()
       
     // write mode
     case 1:
-      // loop through elements of xs
-      for (int i = 0; i < sizeof(xs); i++)
+      // loop through elements of list
+      for (int i = 0; i < listSize; i++)
       {
         // scale elements of dxs and dys to servo microsecond range
         x = xs[i]*(500/200) + 1250.5;
@@ -60,9 +61,9 @@ void loop()
 
 void serialEvent()
 {
-  if(Serial.peek() > 256)
+  if(Serial.peek() > 255)
   {
-    listSize = 256;
+    listSize = 255;
     Serial.read();
   }
   else
