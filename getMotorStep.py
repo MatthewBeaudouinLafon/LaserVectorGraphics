@@ -50,7 +50,7 @@ for path in discretePaths:
 	newPath = []
 	for point in path:
 		x, y = point
-		point = ((x - minX)*scaleUp/scaleDown, (y - minY)*scaleUp/(2*scaleDown)) # y is divided by a factor of two due to the mirror setup
+		point = (int((x - minX)*scaleUp/scaleDown), int((y - minY)*scaleUp/(2*scaleDown))) # y is divided by a factor of two due to the mirror setup
 		newPath.append(point)
 
 	scaledPaths.append(newPath)
@@ -72,7 +72,10 @@ print ser.portstr       # check which port was really used
 
 for path in scaledPaths:
 	ser.write(str(len(path)))
+	print(len(path))
 	for point in path:
+		pass
+		print("{}, {}".format(point[0], point[1]))
 		ser.write(str(point[0]))
 		ser.write(str(point[1]))
 

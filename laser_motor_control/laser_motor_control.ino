@@ -17,8 +17,8 @@ byte data = 0;
 byte listSize = 0;
 
 // stores position data from svg
-byte* xs = (byte*) malloc(16);
-byte* ys = (byte*) malloc(16);
+byte *xs = (byte*) malloc(16);
+byte *ys = (byte*) malloc(16);
 
 
 void setup() 
@@ -53,7 +53,7 @@ void loop()
         // write to servos, delay to ensure accurate tracing
         panServo.writeMicroseconds((int)x);
         tiltServo.writeMicroseconds((int)y);
-        delay(5);
+        delay(20);
       }
       break;
   }
@@ -72,8 +72,8 @@ void serialEvent()
   }
   free(ys);
   free(xs);
-  xs = (byte*) calloc(listSize, 1);
-  ys = (byte*) calloc(listSize, 1);
+  xs = (byte*) malloc(listSize);
+  ys = (byte*) malloc(listSize);
   for (int i = 0; i < listSize; i++)
   {
     xs[i] = Serial.read();
