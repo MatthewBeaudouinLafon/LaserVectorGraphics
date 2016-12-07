@@ -66,18 +66,28 @@ for path in discretePaths:
 # 		for point in zip(*path)[1]:
 # 			print point
 
-# Send x-y over Serial
-ser = serial.Serial('COM6', 9600, timeout=0)  # open first serial port
-print ser.portstr       # check which port was really used
-
+toArduino = []
 for path in scaledPaths:
-	ser.write(str(len(path)))
-	print(len(path))
 	for point in path:
-		pass
-		print("{}, {}".format(point[0], point[1]))
-		ser.write(str(point[0]))
-		ser.write(str(point[1]))
+		toArduino.append(point[0])
+		toArduino.append(point[1])
 
-print "Done"
-ser.close()             # close port
+print "Array length: {}".format(len(toArduino))
+for x in toArduino:
+	print x
+
+# # Send x-y over Serial
+# ser = serial.Serial('COM6', 9600, timeout=0)  # open first serial port
+# print ser.portstr       # check which port was really used
+
+# for path in scaledPaths:
+# 	ser.write(str(len(path)))
+# 	print(len(path))
+# 	for point in path:
+# 		pass
+# 		print("{}, {}".format(point[0], point[1]))
+# 		ser.write(str(point[0]))
+# 		ser.write(str(point[1]))
+
+# print "Done"
+# ser.close()             # close port
