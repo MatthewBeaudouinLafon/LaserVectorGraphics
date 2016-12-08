@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import serial
 
+gearRatio = 43/float(24)
+
 def makeCartesian(complexPoints):
 	cartesianPoints = []
 
@@ -43,15 +45,16 @@ for path in discretePaths:
 # Scale image
 scaledPaths = []
 scaleDown = maxX if maxX > maxY else maxY
-scaleUp = 100
+scaleUp = 200
 
 for path in discretePaths:
 
 	newPath = []
 	for point in path:
 		x, y = point
-		point = (int((x - minX)*scaleUp/scaleDown), int((y - minY)*scaleUp/(2*scaleDown))) # y is divided by a factor of two due to the mirror setup
-		newPath.append(point)
+		zerod = (x - minX, y - minY)
+		scaled = (int(zerod[0]*scaleUp*gearRatio/scaleDown), int(zerod[1]*scaleUp/(scaleDown))) # y is divided by a factor of two due to the mirror setup
+		newPath.append(scaled)
 
 	scaledPaths.append(newPath)
 
@@ -68,6 +71,7 @@ for path in discretePaths:
 
 toArduino = []
 for path in scaledPaths:
+	toArduino.append(len(path))
 	for point in path:
 		toArduino.append(point[0])
 		toArduino.append(point[1])
@@ -76,18 +80,18 @@ print "Array length: {}".format(len(toArduino))
 for x in toArduino:
 	print x
 
-# # Send x-y over Serial
-# ser = serial.Serial('COM6', 9600, timeout=0)  # open first serial port
-# print ser.portstr       # check which port was really used
+# Send x-y over Serial
+ser = serial.Serial('COM4', 9600, timeout=0)  # open first serial port
+print ser.portstr       # check which port was really used
 
-# for path in scaledPaths:
-# 	ser.write(str(len(path)))
-# 	print(len(path))
-# 	for point in path:
-# 		pass
-# 		print("{}, {}".format(point[0], point[1]))
-# 		ser.write(str(point[0]))
-# 		ser.write(str(point[1]))
+for path in scaledPaths:
+	ser.write(str(len(path))) 
+	print(len(path))
+	for point in path:
+		pass
+		print("{}, {}".format(point[0], point[1]))
+		ser.write(str(point[0]))
+		ser.write(str(point[1]))
 
-# print "Done"
-# ser.close()             # close port
+print "Done"
+ser.close()             # close port
