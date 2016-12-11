@@ -18,7 +18,7 @@ def makeCartesian(complexPoints):
 	return cartesianPoints
 
 # Parse XML
-paths, attributes = svg2paths('TestBezier.svg')
+paths, attributes = svg2paths('images/TestBezier.svg')
 
 # Discretize Parametric Curve
 discretePaths = [] # List of paths ie. list of list of points
@@ -76,13 +76,13 @@ for path in scaledPaths:
 		toArduino.append(point[0])
 		toArduino.append(point[1])
 
-print "Array length: {}".format(len(toArduino))
-for x in toArduino:
-	print x
+# print "Array length: {}".format(len(toArduino))
+# for x in toArduino:
+# 	print x
 
-# Send x-y over Serial
-ser = serial.Serial('COM6', 9600, timeout=10)  # open first serial port
-print ser.portstr       # check which port was really used
+# # Send x-y over Serial
+# ser = serial.Serial('COM6', 9600, timeout=10)  # open first serial port
+# print ser.portstr       # check which port was really used
 
 time.sleep(2)
 
@@ -91,7 +91,8 @@ time.sleep(2)
 # 	ser.write(bin(i))
 
 vals = bytearray([4, 1, 1, 5, 5, 10, 10, 5, 5])
-ser.write(vals)
+print(vals)
+# ser.write(vals)
 
 # for path in scaledPaths:
 # 	ser.write(bytearray(toArduino))
@@ -106,7 +107,7 @@ ser.write(vals)
 
 print "Done"
 
-while True:
-	print(ser.read())
+# while True:
+# 	print(ser.read())
 
-ser.close()             # close port
+# ser.close()             # close port
