@@ -1,13 +1,19 @@
-import serial
-ser = serial.Serial('/dev/ttyACM0', 9600)
-
+import serial,time
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=10)
+print ser.portstr
 # rawPoints = parseSVG(testBezier)
 # formatedPoints = formatPoints(rawPoints)
 # ser.write(formatedPoints)
+time.sleep(2)
+ser.write(bytearray([2, 1, 10, 1, 10]))
+print("serial written")
+while(True):
+    try:
+        print(ser.readline())
+    except KeyboardInterrupt:
+        ser.close()
 
-ser.write(bytearray([2, 1, 1, 10, 10]))
-
-def parseSVG(name)
+def parseSVG(name):
     """
     Take the name of an image as a string, and return a discretized list of points
     """
@@ -26,7 +32,7 @@ def parseSVG(name)
 
     return discretePaths
 
-def formatPoints(points, printToConsole=False)
+def formatPoints(points, printToConsole=False):
     """
     Takes a list of points and formats them to be sent to the Arduino (scaled)
     """
@@ -66,7 +72,7 @@ def formatPoints(points, printToConsole=False)
               for point in zip(*path)[0]:
                   print point
 
-              print 'y'   
+              print 'y'
               for point in zip(*path)[1]:
                   print point
 

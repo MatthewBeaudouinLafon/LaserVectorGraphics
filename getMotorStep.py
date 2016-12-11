@@ -65,7 +65,7 @@ for path in discretePaths:
 # 		for point in zip(*path)[0]:
 # 			print point
 
-# 		print 'y'	
+# 		print 'y'
 # 		for point in zip(*path)[1]:
 # 			print point
 
@@ -81,8 +81,8 @@ for path in scaledPaths:
 # 	print x
 
 # # Send x-y over Serial
-# ser = serial.Serial('COM6', 9600, timeout=10)  # open first serial port
-# print ser.portstr       # check which port was really used
+ser = serial.Serial('COM6', 9600, timeout=10)  # open first serial port
+print ser.portstr       # check which port was really used
 
 time.sleep(2)
 
@@ -92,12 +92,12 @@ time.sleep(2)
 
 vals = bytearray([4, 1, 1, 5, 5, 10, 10, 5, 5])
 print(vals)
-# ser.write(vals)
+ser.write(vals)
 
 # for path in scaledPaths:
 # 	ser.write(bytearray(toArduino))
 
-# 	# ser.write(str(len(path))) 
+# 	# ser.write(str(len(path)))
 # 	# # print(len(path))
 # 	# for point in path:
 # 	# 	pass

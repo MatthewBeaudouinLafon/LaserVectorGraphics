@@ -21,8 +21,8 @@ byte sizeInput[2];
 volatile byte listSize = 0;
 
 // stores position data from svg
-byte xs[1024];
-byte ys[1024];
+byte xs[800];
+byte ys[800];
 //byte *xs = (byte*) malloc(16);
 //byte *ys = (byte*) malloc(16);
 
@@ -35,7 +35,7 @@ void setup()
   // initialize serial communication at 9600 bps
   Serial.begin(9600);
   pinMode(13, OUTPUT);
-  //Serial.println("<Arduino is ready>");
+//  Serial.println("<Arduino is ready>");
 }
 
 
@@ -45,12 +45,13 @@ void loop()
   {
     // do nothing
     case 0:
+//      Serial.println("case is 0");
       while(Serial.available()<1);
       break;
       
     // write mode
     case 1:
-//      Serial.println("ok ");
+//      Serial.println("case is 1");
       // loop through elements of list
       for (int i = 0; i < listSize; i++)
       {
@@ -60,8 +61,8 @@ void loop()
         // write to servos, delay to ensure accurate tracing
         panServo.writeMicroseconds((int)x);
         tiltServo.writeMicroseconds((int)y);
-        Serial.println((int)x);
-        Serial.println((int)y);
+        Serial.println(xs[i]);
+        Serial.println(ys[i]);
         delay(10);
       }
       break;
