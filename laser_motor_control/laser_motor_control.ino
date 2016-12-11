@@ -11,9 +11,10 @@ float y = 1500;  // stores tiltServo position
 volatile byte mode = 0;
 
 // for incoming serial data
-byte data = 0;
+//byte data = 0;
+
 // for trash
-byte j[1];
+char j[1];
 
 // for size of incoming data list
 byte sizeInput[2];
@@ -44,7 +45,7 @@ void loop()
   {
     // do nothing
     case 0:
-      while(Serial.available<1);
+      while(Serial.available()<1);
       break;
       
     // write mode
@@ -59,6 +60,8 @@ void loop()
         // write to servos, delay to ensure accurate tracing
         panServo.writeMicroseconds((int)x);
         tiltServo.writeMicroseconds((int)y);
+        Serial.println((int)x);
+        Serial.println((int)y);
         delay(10);
       }
       break;
@@ -77,7 +80,7 @@ void serialEvent()
   }
   else
   {
-    Serial.readBytes(sizeInput,1);
+    Serial.readBytes((char*)sizeInput,1);
     listSize = sizeInput[0];
   }
 //  free(ys);
@@ -90,8 +93,8 @@ void serialEvent()
 //    ys[i] = Serial.read();
 //  }
 
-  Serial.readBytes(xs,listSize);
-  Serial.readBytes(ys,listSize);
+  Serial.readBytes((char*)xs,listSize);
+  Serial.readBytes((char*)ys,listSize);
   
   while (Serial.available() > 0)
   {
