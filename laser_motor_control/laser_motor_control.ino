@@ -12,13 +12,18 @@ volatile byte mode = 0;
 
 // for incoming serial data
 byte data = 0;
+// for trash
+byte j[1];
 
 // for size of incoming data list
+byte sizeInput[2];
 volatile byte listSize = 0;
 
 // stores position data from svg
-byte *xs = (byte*) malloc(16);
-byte *ys = (byte*) malloc(16);
+byte xs[1024];
+byte ys[1024];
+//byte *xs = (byte*) malloc(16);
+//byte *ys = (byte*) malloc(16);
 
 
 void setup() 
@@ -39,10 +44,7 @@ void loop()
   {
     // do nothing
     case 0:
-      //Serial.println("fuck ");
-      if (Serial.available() > 0) {
-        cerealEvent();
-      }
+      while(Serial.available<1);
       break;
       
     // write mode
@@ -55,44 +57,45 @@ void loop()
         x = xs[i]*(500/200) + 1250.5;
         y = ys[i]*(500/100) + 1250.5;
         // write to servos, delay to ensure accurate tracing
-        //Serial.println((int)x);
-        //Serial.println((int)y);
         panServo.writeMicroseconds((int)x);
         tiltServo.writeMicroseconds((int)y);
-        delay(20);
-      }
-      if (Serial.available() > 0) {
-        cerealEvent();
+        delay(10);
       }
       break;
   }
-  Serial.println(listSize);
+  
+Serial.println(listSize);
 
 }
 
-void cerealEvent()
+void serialEvent()
 {
-  mode = 1;
   if(Serial.peek() > 255)
   {
     listSize = 255;
-    Serial.read();
+    Serial.readBytes(j,1);
   }
   else
   {
-    listSize = Serial.read();
+    Serial.readBytes(sizeInput,1);
+    listSize = sizeInput[0];
   }
-  free(ys);
-  free(xs);
-  xs = (byte*) malloc(listSize);
-  ys = (byte*) malloc(listSize);
-  for (int i = 0; i < listSize; i++)
-  {
-    xs[i] = Serial.read();
-    ys[i] = Serial.read();
-  }
+//  free(ys);
+//  free(xs);
+//  xs = (byte*) malloc(listSize);
+//  ys = (byte*) malloc(listSize);
+//  for (int i = 0; i < listSize; i++)
+//  {
+//    xs[i] = Serial.read();
+//    ys[i] = Serial.read();
+//  }
+
+  Serial.readBytes(xs,listSize);
+  Serial.readBytes(ys,listSize);
+  
   while (Serial.available() > 0)
   {
-    Serial.read();
+    Serial.readBytes(j,1);
   }
+  mode = 1;
 }
