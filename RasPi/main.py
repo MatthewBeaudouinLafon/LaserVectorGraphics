@@ -1,20 +1,5 @@
 import RPi.GPIO as GPIO
 import serial,time
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=10)
-print ser.portstr
-
-# rawPoints = parseSVG(testBezier)
-# formatedPoints = formatPoints(rawPoints)
-# ser.write(formatedPoints)
-time.sleep(2)
-ser.write(bytearray([2, 1, 10, 1, 10]))
-print("serial written")
-
-while(True):
-    try:
-        print(ser.readline())
-    except KeyboardInterrupt:
-        ser.close()
 
 def parseSVG(name):
     """
@@ -34,12 +19,6 @@ def parseSVG(name):
         discretePaths.append(points)
 
     return discretePaths
-
-def getTouchScreenInput():
-    """
-    Get input from the touch screen trough a secondary serial
-    """
-    pass
 
 def formatPoints(points, printToConsole=False):
     """
@@ -94,24 +73,61 @@ def formatPoints(points, printToConsole=False):
 
     return toArduino
 
-ser = serial.Serial('/dev/ttyACM0', 9600)
-time.sleep(2)
+def sendMotorInstructions(points):
+    """
+    Send list of points to the motors over serial  
+    """
+    byteArray = formatPoints(points)
+    motorSer.write(byteArray)
 
+motorSer = serial.Serial('/dev/ttyACM0', 9600, timeout=10)
+touchSer = serial.Serial('/dev/ttyACM1', 9600, timeout=10)
+
+presetImages = ['testBezier']
+presetIdx = 0
+
+screenPoints = []
+UPLOAD = 255
+CANCEL = 254
+WAIT = 253
+NEXT = 252
+PREV = 251
+
+print 'Motor port: ' + motorSer.portstr
+print 'Touch screen port: ' + touchSer.portstr
+
+time.sleep(2) # Allow time for serial to connect
 
 # rawPoints = parseSVG(testBezier)
 # formatedPoints = formatPoints(rawPoints)
 # ser.write(formatedPoints)
 
-ser.write(bytearray([2, 1, 1, 10, 10]))
+motorSer.write(bytearray([2, 1, 1, 10, 10]))
 print ser.portstr       # check which port was really used
 
 try:
     while True:
-        print(ser.read())
+        print(motorSer.read())
+        
+        # Intepret touch screen input
+        screenValue = screenSer.read()
 
-        # If the touch screen is touched, get touch screen data
+        if screenValue == UPLOAD:
+            sendMotorInstructions(screenPoints)
+        else if screenValue == CANCEL:
+            screenPoints = []
+        else if screenValue != WAIT:
+            screenPoints.append(screenValue) 
+        else if screenValue != NEXT:
+            presetIdx += 1
+            presetIdx %= len(screenPoints)
+            sendMotorInstructions(parseSVG(presetImages[presetIdx])[0]) # CHANGE THIS ONCE MULTIPLE CURVES IS IN
+        else if screenValue != PREV:
+            presetIdx -= 1
+            presetIdx %= len(screenPoints)
+            sendMotorInstructions(parseSVG(presetImages[presetIdx])[0]) # CHANGE THIS ONCE MULTIPLE CURVES IS IN
 
-        # If there is nothing drawn, print the selected preset
+
 except KeyboardInterrupt:
-    ser.close()
+    motorSer.close()
     GPIO.cleanup() # cleanup all GPIO
