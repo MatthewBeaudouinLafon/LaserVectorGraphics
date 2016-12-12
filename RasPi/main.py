@@ -1,13 +1,8 @@
+import RPi.GPIO as GPIO
 import serial
-ser = serial.Serial('/dev/ttyACM0', 9600)
+import time
 
-# rawPoints = parseSVG(testBezier)
-# formatedPoints = formatPoints(rawPoints)
-# ser.write(formatedPoints)
-
-ser.write(bytearray([2, 1, 1, 10, 10]))
-
-def parseSVG(name)
+def parseSVG(name):
     """
     Take the name of an image as a string, and return a discretized list of points
     """
@@ -26,7 +21,15 @@ def parseSVG(name)
 
     return discretePaths
 
-def formatPoints(points, printToConsole=False)
+def getTouchScreenInput():
+    """
+    Get input from the touch screen trough a secondary serial
+    """
+    pass
+
+
+
+def formatPoints(points, printToConsole=False):
     """
     Takes a list of points and formats them to be sent to the Arduino (scaled)
     """
@@ -78,3 +81,26 @@ def formatPoints(points, printToConsole=False)
             toArduino.append(point[1])
 
     return toArduino
+
+ser = serial.Serial('/dev/ttyACM0', 9600)
+time.sleep(2)
+
+
+# rawPoints = parseSVG(testBezier)
+# formatedPoints = formatPoints(rawPoints)
+# ser.write(formatedPoints)
+
+ser.write(bytearray([2, 1, 1, 10, 10]))
+print ser.portstr       # check which port was really used
+
+try:
+    while True:
+        print(ser.read())
+
+        # If the touch screen is touched, get touch screen data
+
+        # If there is nothing drawn, print the selected preset
+except KeyboardInterrupt:
+    ser.close()
+    GPIO.cleanup() # cleanup all GPIO
+
