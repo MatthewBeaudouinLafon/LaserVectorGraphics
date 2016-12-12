@@ -1,6 +1,20 @@
 import RPi.GPIO as GPIO
-import serial
-import time
+import serial,time
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=10)
+print ser.portstr
+
+# rawPoints = parseSVG(testBezier)
+# formatedPoints = formatPoints(rawPoints)
+# ser.write(formatedPoints)
+time.sleep(2)
+ser.write(bytearray([2, 1, 10, 1, 10]))
+print("serial written")
+
+while(True):
+    try:
+        print(ser.readline())
+    except KeyboardInterrupt:
+        ser.close()
 
 def parseSVG(name):
     """
@@ -26,8 +40,6 @@ def getTouchScreenInput():
     Get input from the touch screen trough a secondary serial
     """
     pass
-
-
 
 def formatPoints(points, printToConsole=False):
     """
@@ -69,7 +81,7 @@ def formatPoints(points, printToConsole=False):
               for point in zip(*path)[0]:
                   print point
 
-              print 'y'   
+              print 'y'
               for point in zip(*path)[1]:
                   print point
 
@@ -103,4 +115,3 @@ try:
 except KeyboardInterrupt:
     ser.close()
     GPIO.cleanup() # cleanup all GPIO
-
