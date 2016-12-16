@@ -74,6 +74,7 @@ for path in scaledPaths:
 	toArduino.append(len(path))
 	for point in path:
 		toArduino.append(point[0])
+	for point in path:
 		toArduino.append(point[1])
 
 # print "Array length: {}".format(len(toArduino))
@@ -90,9 +91,9 @@ time.sleep(2)
 # 	# ser.write(struct.pack('>B', i))
 # 	ser.write(bin(i))
 
-vals = bytearray([4, 1, 1, 5, 5, 10, 10, 5, 5])
-print(vals)
-ser.write(vals)
+# vals = bytearray([4, 1, 1, 5, 5, 10, 10, 5, 5])
+# print(vals)
+ser.write(toArduino)
 
 # for path in scaledPaths:
 # 	ser.write(bytearray(toArduino))
@@ -110,4 +111,4 @@ print "Done"
 # while True:
 # 	print(ser.read())
 
-# ser.close()             # close port
+ser.close()             # close port

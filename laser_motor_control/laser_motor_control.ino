@@ -56,14 +56,14 @@ void loop()
       for (int i = 0; i < listSize; i++)
       {
         // scale elements of dxs and dys to servo microsecond range
-        x = xs[i]*(500/200) + 1250.5;
-        y = ys[i]*(500/100) + 1250.5;
+        x = xs[i]*5 + 1000;
+        y = ys[i]*5 + 1000;
         // write to servos, delay to ensure accurate tracing
         panServo.writeMicroseconds((int)x);
         tiltServo.writeMicroseconds((int)y);
-        Serial.println(xs[i]);
-        Serial.println(ys[i]);
-        delay(10);
+//        Serial.println(xs[i]);
+//        Serial.println(ys[i]);
+        delay(5);
       }
       break;
   }
