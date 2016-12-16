@@ -4,8 +4,8 @@
 Servo panServo;
 Servo tiltServo;
  
-float x = 1485;  // stores panServo position
-float y = 1485;  // stores tiltServo position
+float x = 1500;  // stores panServo position
+float y = 1500;  // stores tiltServo position
 
 // determines which switch case is executed in loop()
 volatile byte mode = 0;
@@ -27,7 +27,7 @@ byte ys[800];
 void setup() 
 { 
   // set up servo objects
-  panServo.attach(3, 1000, 2000);
+  panServo.attach(6, 1000, 2000);
   tiltServo.attach(9, 1000, 2000);
   // initialize serial communication at 9600 bps
   Serial.begin(9600);
@@ -64,9 +64,11 @@ void loop()
         else // all other cases
         {
           // scale elements of dxs and dys to servo microsecond range (approx 60 to 115 degrees)
-          x = xs[i]*1.5 + 1335.5;
-          y = ys[i]*1.5 + 1335.5;
+          x = xs[i]*3 + 1200.5;
+          y = ys[i]*3 + 1200.5;
           // write to servos, delay to ensure "accurate" tracing
+          Serial.println((int)x);
+          Serial.println((int)y);
           panServo.writeMicroseconds((int)x);
           tiltServo.writeMicroseconds((int)y);
           delay(8);
@@ -75,7 +77,7 @@ void loop()
       break;
   }
   
-//Serial.println(listSize);
+Serial.println(listSize);
 
 }
 

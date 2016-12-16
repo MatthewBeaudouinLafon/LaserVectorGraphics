@@ -83,7 +83,7 @@ for path in scaledPaths:
 # 	print x
 
 # # Send x-y over Serial
-ser = serial.Serial('COM5', 9600, timeout=10)  # open first serial port
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=10)  # open first serial port
 print ser.portstr       # check which port was really used
 
 time.sleep(2)
@@ -95,7 +95,7 @@ time.sleep(2)
 # vals = bytearray([4, 1, 1, 5, 5, 10, 10, 5, 5])
 # print(vals)
 ser.write(bytearray(toArduino))
-
+print len(toArduino)
 # for path in scaledPaths:
 # 	ser.write(bytearray(toArduino))
 
@@ -109,7 +109,7 @@ ser.write(bytearray(toArduino))
 
 print "Done"
 
-# while True:
-# 	print(ser.read())
+while True:
+	print(ser.readline())
 
 ser.close()             # close port
