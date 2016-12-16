@@ -71,7 +71,8 @@ for path in discretePaths:
 
 toArduino = []
 for path in scaledPaths:
-	toArduino.append(len(path))
+	toArduino.append(len(path)//255)
+	toArduino.append(len(path)%255)
 	for point in path:
 		toArduino.append(point[0])
 	for point in path:
@@ -93,7 +94,7 @@ time.sleep(2)
 
 # vals = bytearray([4, 1, 1, 5, 5, 10, 10, 5, 5])
 # print(vals)
-ser.write(toArduino)
+ser.write(bytearray(toArduino))
 
 # for path in scaledPaths:
 # 	ser.write(bytearray(toArduino))
