@@ -75,7 +75,7 @@ void loop()
       break;
   }
   
-Serial.println(listSize);
+//Serial.println(listSize);
 
 }
 
