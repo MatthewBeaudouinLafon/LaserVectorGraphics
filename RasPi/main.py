@@ -1,3 +1,4 @@
+from svgpathtools import svg2paths
 import RPi.GPIO as GPIO
 import serial,time
 
@@ -39,15 +40,15 @@ def formatPoints(points, printToConsole=False):
     # Scale image
     scaledPaths = []
     scaleDown = maxX if maxX > maxY else maxY
-    scaleUp = 200
+    scaleUp = 200.0
 
     for path in discretePaths:
 
         newPath = []
         for point in path:
             x, y = point
-            zerod = (x - minX, y - minY)
-            scaled = (int(zerod[0]*scaleUp/scaleDown), int(zerod[1]*scaleUp/(scaleDown))) # y is divided by a factor of two due to the mirror setup
+            zeroed = (x - minX, y - minY)
+            scaled = (int(zeroed[0]*scaleUp/scaleDown), int(zeroed[1]*scaleUp/scaleDown))
             newPath.append(scaled)
 
         scaledPaths.append(newPath)
@@ -65,11 +66,22 @@ def formatPoints(points, printToConsole=False):
                   print point
 
     toArduino = []
+    firstCurve = True
+    servoSpeed = 0.2
     for path in scaledPaths:
+        if not firstCurve:
+            distance = sqrt((lastX - path[0][0])**2 + (lastY - path[0][1])**2)
+            toArduino.append(int(distance*servoSpeed))
+            firstCurve = False
+
         toArduino.append(len(path))
         for point in path:
             toArduino.append(point[0])
+            lastX = point[0]
+        for point in path:
             toArduino.append(point[1])
+            lastY = point[1]
+        toArduino.append(201)
 
     return toArduino
 
@@ -87,11 +99,8 @@ presetImages = ['testBezier']
 presetIdx = 0
 
 screenPoints = []
-UPLOAD = 255
-CANCEL = 254
-WAIT = 253
-NEXT = 252
-PREV = 251
+NEXT = -2
+PREV = -3
 
 print 'Motor port: ' + motorSer.portstr
 print 'Touch screen port: ' + touchSer.portstr
@@ -108,24 +117,44 @@ print ser.portstr       # check which port was really used
 try:
     while True:
         print(motorSer.read())
-        
-        # Intepret touch screen input
-        screenValue = screenSer.read()
 
-        if screenValue == UPLOAD:
-            sendMotorInstructions(screenPoints)
-        else if screenValue == CANCEL:
-            screenPoints = []
-        else if screenValue != WAIT:
-            screenPoints.append(screenValue) 
-        else if screenValue != NEXT:
+        # Intepret touch screen input
+        screenValue = screenSer.readline()
+        print(screenValue)
+
+        if screenValue == NEXT:
             presetIdx += 1
             presetIdx %= len(screenPoints)
             sendMotorInstructions(parseSVG(presetImages[presetIdx])[0]) # CHANGE THIS ONCE MULTIPLE CURVES IS IN
-        else if screenValue != PREV:
+        else if screenValue == PREV:
             presetIdx -= 1
             presetIdx %= len(screenPoints)
             sendMotorInstructions(parseSVG(presetImages[presetIdx])[0]) # CHANGE THIS ONCE MULTIPLE CURVES IS IN
+        else if screenValue != '':
+            touchScreenImage = [[]]
+            while screenValue != '':
+                if screenValue == -1:
+                    touchScreenImage.append([])
+                    screenValue = ser.readline()
+                nextScreenValue = ser.readline()
+                if screenValue != '' and nextScreenValue != '':
+                    touchScreenImage[-1].append((screenValue,nextScreenValue))
+
+        # if screenValue == UPLOAD:
+        #     sendMotorInstructions(screenPoints)
+        #     screenPoints = []
+        # else if screenValue == CANCEL:
+        #     screenPoints = []
+        # else if screenValue == NEXT:
+        #     presetIdx += 1
+        #     presetIdx %= len(screenPoints)
+        #     sendMotorInstructions(parseSVG(presetImages[presetIdx])[0]) # CHANGE THIS ONCE MULTIPLE CURVES IS IN
+        # else if screenValue == PREV:
+        #     presetIdx -= 1
+        #     presetIdx %= len(screenPoints)
+        #     sendMotorInstructions(parseSVG(presetImages[presetIdx])[0]) # CHANGE THIS ONCE MULTIPLE CURVES IS IN
+        # else if screenValue != WAIT:
+        #     screenPoints.append(screenValue) 
 
 
 except KeyboardInterrupt:
