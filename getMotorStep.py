@@ -45,7 +45,7 @@ for path in discretePaths:
 # Scale image
 scaledPaths = []
 scaleDown = maxX if maxX > maxY else maxY
-scaleUp = 200
+scaleUp = 200.0
 
 for path in discretePaths:
 
@@ -83,7 +83,7 @@ for path in scaledPaths:
 # 	print x
 
 # # Send x-y over Serial
-ser = serial.Serial('COM6', 9600, timeout=10)  # open first serial port
+ser = serial.Serial('COM5', 9600, timeout=10)  # open first serial port
 print ser.portstr       # check which port was really used
 
 time.sleep(2)
